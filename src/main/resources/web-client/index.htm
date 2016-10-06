@@ -25,7 +25,7 @@
             <button class="button" id="disconnectBtn">Disconnect</button>
             <div id="status">Status: <span id="state">Not connected</span></div>
             <input class="input" type="text" id="msg"/>
-            <button class="button" id="sendMsg">Send</button>
+            <button class="button" id="sendBtn">Send</button>
         </div>
     </div>
 
@@ -58,16 +58,6 @@
              };
           }
         }
-
-        $("#sendMsg").click(function() {
-          var msg = $("#msg").val();
-          $.ajax({
-             type: "POST",
-             url: "/api/broadcast",
-             data: msg,
-             contentType: "text/plain"
-          });
-        });
 
         $("#sendBtn").click(function() {
           if(socket != null) {

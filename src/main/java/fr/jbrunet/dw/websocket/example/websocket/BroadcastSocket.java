@@ -3,10 +3,7 @@ package fr.jbrunet.dw.websocket.example.websocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
+import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.Set;
@@ -25,27 +22,25 @@ public class BroadcastSocket {
     @OnOpen
     public void onOpen(Session session) {
         sessions.add(session);
-        log.info("Socket Connected: {}", Integer.toHexString(session.hashCode()));
+        log.info("Socket opened, session id {}", Integer.toHexString(session.hashCode()));
     }
 
     @OnClose
-    public void onClose(Session session) {
+    public void onClose(Session session, CloseReason reason) {
         sessions.remove(session);
-        log.info("Socket Closed");
+        log.info("Socket closed for session id {}, reason : {}", Integer.toHexString(session.hashCode()), reason.getReasonPhrase());
     }
 
     @OnMessage
-    public void onMessage(String message, Session session) {
-        log.info("Got text {} from {}", message, Integer.toHexString(session.hashCode()));
-    }
-
-    public static void broadcast(String msg) {
-        sessions.forEach(session -> {
+    public void onMessage(String message, Session senderSession) {
+        log.info("Message received from session {} : {}", Integer.toHexString(senderSession.hashCode()), message);
+        sessions.forEach(s -> {
             try {
-                session.getBasicRemote().sendText(msg);
+                s.getBasicRemote().sendText("[" + Integer.toHexString(senderSession.hashCode()) + "] " + message);
             } catch (IOException e) {
                 log.error("Problem broadcasting message", e);
             }
         });
     }
+
 }

@@ -1,7 +1,6 @@
 package fr.jbrunet.dw.websocket.example;
 
 import be.tomcools.dropwizard.websocket.WebsocketBundle;
-import fr.jbrunet.dw.websocket.example.api.BroadcasterResource;
 import fr.jbrunet.dw.websocket.example.websocket.BroadcastSocket;
 import io.dropwizard.Application;
 import io.dropwizard.bundles.assets.ConfiguredAssetsBundle;
@@ -20,14 +19,15 @@ public class WebsocketExampleApp extends Application<WebsocketExampleConfig> {
 
     @Override
     public void initialize(Bootstrap<WebsocketExampleConfig> bootstrap) {
+        //Bind the web client html page
         bootstrap.addBundle(new ConfiguredAssetsBundle("/web-client/", "/"));
+
+        //Bind the websocket
         bootstrap.addBundle(websocket);
     }
 
     @Override
     public void run(WebsocketExampleConfig configuration, Environment environment) throws Exception {
-        environment.jersey().register(new BroadcasterResource());
-
         //Annotated endpoint
         websocket.addEndpoint(BroadcastSocket.class);
 
